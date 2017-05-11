@@ -3,6 +3,8 @@ This auto-grader is used for lab3 of _Programming and Data Structure_ course (SE
 
 ## Test your code
 
+Create `/reports`, `/submits` directories under grader's root directory.
+
 Rename your _Word Ladder_ implementation in such format as `wordLadder+studentId+yourName.cpp` and put it under `submits` directory.
 
 Run `python3 ./auto-grader.py` in terminal and your test results should be prompted soon.
