@@ -1,11 +1,12 @@
 import subprocess
+import threading
 
 from os import getcwd, listdir
 
 
 def compile_ladder(source_file, report_file):
     try:
-        process = subprocess.Popen(["g++", "-std=c++11", source_file, "-o", "ladder"])
+        process = subprocess.Popen(["g++", "-std=c++11", "-O2", source_file, "-o", "ladder"])
         process.communicate()
     except:
         report_file.write("cannot compile {}\n".format(source_file))
@@ -13,10 +14,13 @@ def compile_ladder(source_file, report_file):
 
 def grade_ladder(report_file):
     trace_passed = 0
+    threads = []
 
     for trace in listdir(getcwd() + "/traces"):
         if not trace.startswith("trace"):
             continue
+
+        print("running {}".format(trace))
 
         # run ladder
         trace_file = open("traces/" + trace, "r")
@@ -37,7 +41,7 @@ def grade_ladder(report_file):
 
         # check ladder result
         try:
-            out, err = ladder_process.communicate(timeout=5)
+            out, err = ladder_process.communicate(timeout=10)
             output = out.decode()
         except subprocess.TimeoutExpired:
             report_file.write("{}: ladder time out\n".format(trace))
@@ -68,6 +72,7 @@ def grade_ladder(report_file):
         report_file.write("{}: trace passed\n".format(trace))
         trace_passed += 1
 
+    report_file.write("your program passed {} trace(s)".format(trace_passed))
     return trace_passed
 
 
@@ -86,7 +91,7 @@ def main():
         report = open("reports/" + report_name, "w")
         compile_ladder("submits/" + cpp, report)
         trace_passed = grade_ladder(report)
-        print(report_name + "\t" + trace_passed)
+        print("{}\t{}".format(report_name, trace_passed))
 
 
 if __name__ == '__main__':
